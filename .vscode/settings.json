@@ -1,0 +1,7 @@
+{
+    "terminal.integrated.automationProfile.windows": {},
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.autopep8"
+    },
+    "python.formatting.provider": "none"
+}
