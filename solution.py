@@ -1,28 +1,20 @@
 from bisect import bisect_left, bisect_right
+from collections import deque
 from typing import *
+
+class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
 
 
 class Solution:
-    def findLongestChain(self, pairs: List[List[int]]) -> int:
-
-        pairs.sort(key=lambda p: p[1])
-
-        last = float('-inf')
-
-        ans = 0
-
-        for a, b in pairs:
-            if last < a:
-                last = b
-                ans += 1
-
-        return ans
-
+    def addTwoNumbers(self, l1: Optional[ListNode], l2: Optional[ListNode]) -> Optional[ListNode]:
+        return None
 
 def main():
     s = Solution()
-    ans = s.findLongestChain(pairs=[[1, 2], [2, 3], [3, 4]])
+    ans = s.canCross(stones=[0, 1, 3, 5, 6, 8, 12, 17])
     print(ans)
-
 
 main()
