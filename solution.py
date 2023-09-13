@@ -2,30 +2,26 @@ from bisect import bisect_left, bisect_right
 from collections import deque
 from typing import *
 
+
 class Solution:
-    def minimumReplacement(self, nums: List[int]) -> int:
-        l = len(nums) - 1
-        
-        las = nums[l]
+    def candy(self, ratings: List[int]) -> int:
+        l = len(ratings)
+        dp = [1] * (l)
 
-        ans = 0
+        for i in range(1, l):
+            if ratings[i] > ratings[i - 1] and dp[i] <= dp[i - 1]:
+                dp[i] = dp[i - 1] + 1
 
-        for i in range(l - 1, -1, -1):
-            if nums[i] > las:
-                t = nums[i] // las
-                if nums[i] % las:
-                    t += 1
-                las = nums[i] // t
-                ans = t - 1
-            else:
-                las = nums[i]
+        for i in range(l - 2, -1, -1):
+            if ratings[i] > ratings[i + 1] and dp[i] <= dp[i - 1]:
+                dp[i] = dp[i + 1] + 1
 
-        return ans
+        return sum(dp)
 
 
 def main():
     s = Solution()
-    ans = s.minimumReplacement(nums=[3, 9, 3])
+    ans = s.candy(ratings=[1, 3, 2, 2, 1])
     print(ans)
 
 
