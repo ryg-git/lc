@@ -1,27 +1,34 @@
 from bisect import bisect_left, bisect_right
-from collections import deque
+from collections import defaultdict, deque
+import heapq
 from typing import *
 
 
 class Solution:
-    def candy(self, ratings: List[int]) -> int:
-        l = len(ratings)
-        dp = [1] * (l)
+    def findItinerary(self, tickets: List[List[str]]) -> List[str]:
+        graph = defaultdict(list)
 
-        for i in range(1, l):
-            if ratings[i] > ratings[i - 1] and dp[i] <= dp[i - 1]:
-                dp[i] = dp[i - 1] + 1
+        a = sorted(tickets, reverse=True)
 
-        for i in range(l - 2, -1, -1):
-            if ratings[i] > ratings[i + 1] and dp[i] <= dp[i - 1]:
-                dp[i] = dp[i + 1] + 1
+        for src, dst in sorted(tickets, reverse=True):
+            graph[src].append(dst)
 
-        return sum(dp)
+        itinerary = []
+
+        def dfs(airport):
+            while graph[airport]:
+                dfs(graph[airport].pop())
+            itinerary.append(airport)
+
+        dfs("JFK")
+
+        return itinerary[::-1]
 
 
 def main():
     s = Solution()
-    ans = s.candy(ratings=[1, 3, 2, 2, 1])
+    ans = s.findItinerary(
+        tickets=[["JFK", "KUL"], ["JFK", "NRT"], ["NRT", "JFK"]])
     print(ans)
 
 
