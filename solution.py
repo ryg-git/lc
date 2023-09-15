@@ -4,31 +4,71 @@ import heapq
 from typing import *
 
 
+def manhattan_distance(p1: List[int], p2: List[int]) -> int:
+    return abs(p1[0] - p2[0]) + abs(p1[1] - p2[1])
+
+
+class UnionFind:
+    def __init__(self, n):
+        self.parent = [i for i in range(n)]
+        self.rank = [0 for _ in range(n)]
+
+    def find(self, u):
+        if self.parent[u] == u:
+            return u
+        else:
+            self.parent[u] = self.find(self.parent[u])
+            return self.parent[u]
+
+    def union(self, u, v):
+        u = self.find(u)
+        v = self.find(v)
+
+        if u == v:
+            return False
+        else:
+            if self.rank[u] < self.rank[v]:
+                u, v = v, u
+
+            self.parent[v] = u
+
+            if self.rank[v] == self.rank[u]:
+                self.rank[u] += 1
+
+
 class Solution:
-    def findItinerary(self, tickets: List[List[str]]) -> List[str]:
-        graph = defaultdict(list)
+    def minCostConnectPoints(self, points: List[List[int]]) -> int:
+        n = len(points)
 
-        a = sorted(tickets, reverse=True)
+        uf = UnionFind(n)
 
-        for src, dst in sorted(tickets, reverse=True):
-            graph[src].append(dst)
+        hp = []
 
-        itinerary = []
+        for i in range(n):
+            for j in range(i + 1, n):
+                d = manhattan_distance(points[i], points[j])
+                
+                heapq.heappush((d, i, j))
 
-        def dfs(airport):
-            while graph[airport]:
-                dfs(graph[airport].pop())
-            itinerary.append(airport)
+        mst_wt = 0
+        mst_ed = 0
 
-        dfs("JFK")
+        while hp:
+            w, u, v = heapq.heappop(hp)
+            
+            if uf.union(u, v):
+                mst_wt += w
+                mst_ed += 1
+                
+                if mst_ed - 1 == n:
+                    break
 
-        return itinerary[::-1]
+        return mst_wt
 
 
 def main():
     s = Solution()
-    ans = s.findItinerary(
-        tickets=[["JFK", "KUL"], ["JFK", "NRT"], ["NRT", "JFK"]])
+    ans = s.minCostConnectPoints(points=[[3, 12], [-2, 5], [-4, 1]])
     print(ans)
 
 
