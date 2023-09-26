@@ -4,71 +4,36 @@ import heapq
 from typing import *
 
 
-def manhattan_distance(p1: List[int], p2: List[int]) -> int:
-    return abs(p1[0] - p2[0]) + abs(p1[1] - p2[1])
-
-
-class UnionFind:
-    def __init__(self, n):
-        self.parent = [i for i in range(n)]
-        self.rank = [0 for _ in range(n)]
-
-    def find(self, u):
-        if self.parent[u] == u:
-            return u
-        else:
-            self.parent[u] = self.find(self.parent[u])
-            return self.parent[u]
-
-    def union(self, u, v):
-        u = self.find(u)
-        v = self.find(v)
-
-        if u == v:
-            return False
-        else:
-            if self.rank[u] < self.rank[v]:
-                u, v = v, u
-
-            self.parent[v] = u
-
-            if self.rank[v] == self.rank[u]:
-                self.rank[u] += 1
-
-
 class Solution:
-    def minCostConnectPoints(self, points: List[List[int]]) -> int:
-        n = len(points)
+    def maximumSumOfHeights(self, maxHeights: List[int]) -> int:
 
-        uf = UnionFind(n)
+        def find_max(arr: List[int]):
+            st = [(arr[0], arr[0])]
+            n = len(arr)
 
-        hp = []
+            for i in range(1, n):
+                cnt = 1
+                j = i
+                while j > 0 and arr[j - 1] > arr[j]:
+                    s, c = st[j]
+                    cnt += c
+                    j -= 1
 
-        for i in range(n):
-            for j in range(i + 1, n):
-                d = manhattan_distance(points[i], points[j])
-                
-                heapq.heappush((d, i, j))
+                if st:
+                    su += st[-1][1]
 
-        mst_wt = 0
-        mst_ed = 0
+                st.append((h, su + cnt * h, cnt))
 
-        while hp:
-            w, u, v = heapq.heappop(hp)
-            
-            if uf.union(u, v):
-                mst_wt += w
-                mst_ed += 1
-                
-                if mst_ed - 1 == n:
-                    break
+            return st
 
-        return mst_wt
+        le = [0] + list(map(lambda x: x[1], find_max(maxHeights)))
+
+        return le
 
 
 def main():
     s = Solution()
-    ans = s.minCostConnectPoints(points=[[3, 12], [-2, 5], [-4, 1]])
+    ans = s.maximumSumOfHeights(maxHeights=[3, 2, 5, 5, 2, 3])
     print(ans)
 
 
