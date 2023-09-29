@@ -1,77 +1,92 @@
-'''input
+class TreeNode:
+    def __init__(self, data):
+        self.left = None
+        self.right = None
+        self.val = data
 
-'''
-import sys
-import math
-import bisect
-from sys import stdin, stdout
-from math import gcd, floor, sqrt, log
-from collections import defaultdict as dd, deque
-from bisect import bisect_left as bl, bisect_right as br
-
-sys.setrecursionlimit(100000000)
+    def PrintTree(self):
+        print(self.val)
 
 
-def inp(): return int(input())
-def strng(): return input().strip()
+def poTravel(tn: TreeNode):
+    st, po = [], []
 
+    current = tn
 
-def jn(x, l): return x.join(map(str, l))
-def strl(): return list(input().strip())
+    lv = None
 
+    ls, rs = [[0, 0]], []
 
-def mul(): return map(int, input().strip().split())
-def mulf(): return map(float, input().strip().split())
-def seq(): return list(map(int, input().strip().split()))
+    while st or current:
+        if current:
+            st.append(current)
+            current = current.left
+            if current:
+                if rs and rs[-1][0] > ls[-1][0]:
+                    ls.append([rs[-1][0] + 1 if rs else 1, 0])
+                else:
+                    ls.append([ls[-1][0] + 1 if ls else 1, 0])
 
+        else:
+            if st[-1].right and lv != st[-1].right:
+                current = st[-1].right
+                if rs and ls[-1][0] > rs[-1][0]:
+                    rs.append([ls[-1][0] + 1 if ls else 1, 0])
+                elif not rs and ls:
+                    rs.append([ls[-1][0] + 1 if ls else 1, 0])
+                else:
+                    rs.append([rs[-1][0] + 1 if rs else 1, 0])
 
-def ceil(x): return int(x) if (x == int(x)) else int(x)+1
-def ceildiv(x, d): return x//d if (x % d == 0) else x//d+1
+            else:
+                nd = st.pop()
 
+                if not rs and ls:
+                    nv = ls[-1][1] + nd.val
+                    po.append(nv)
+                    ls.pop()
+                    if ls:
+                        ls[-1][1] += nv
 
-def flush(): return stdout.flush()
-def stdstr(): return stdin.readline()
-def stdint(): return int(stdin.readline())
+                elif not ls and rs:
+                    nv = rs[-1][1] + nd.val
+                    po.append(nv)
+                    rs.pop()
+                    if rs:
+                        rs[-1][1] += nv
 
+                elif ls[-1][0] < rs[-1][0]:
+                    nv = rs[-1][1] + nd.val
+                    po.append(nv)
+                    rs.pop()
+                    if rs and ls[-1][0] < rs[-1][0]:
+                        rs[-1][1] += nv
+                    else:
+                        ls[-1][1] += nv
 
-def stdpr(x): return stdout.write(str(x))
+                elif rs[-1][0] < ls[-1][0]:
+                    nv = ls[-1][1] + nd.val
+                    po.append(nv)
+                    ls.pop()
+                    if ls and rs[-1][0] < ls[-1][0]:
+                        ls[-1][1] += nv
+                    else:
+                        rs[-1][1] += nv
 
+                lv = nd
 
-mod = 1000000007
-
-# main code
-
-
-def solution():
-    k = inp()
-
-    if k < 10:
-        return k
-    else:
-        k -= 9
-        
-        q = deque([1, 2, 3, 4, 5, 6, 7, 8, 9])
-        
-        while q:
-            nu = q.popleft()
-            
-            ln = nu % 10
-            
-            for i in range(ln):
-                q.append(nu * 10 + i)
-                k -= 1
-                if k == 0:
-                    num = q.pop()
-                    return num
-        return -1
+    return po
 
 
 def main():
-    t = 1
+    r = TreeNode(7)
+    r.left = TreeNode(3)
+    r.left.left = TreeNode(6)
+    # r.left.left = TreeNode(1)
+    r.left.left.left = TreeNode(2)
+    r.left.left.left.left = TreeNode(4)
+    r.right = TreeNode(5)
 
-    for _ in range(t):
-        ans = solution()
-        print(ans)
+    poTravel(r)
 
 
 main()
