@@ -1,43 +1,36 @@
 from bisect import bisect_left, bisect_right
-from collections import defaultdict, deque
+from collections import defaultdict, deque, Counter
 from functools import cache
 import heapq
 from typing import *
 
 
 class Solution:
-    def searchRange(self, nums: List[int], target: int) -> List[int]:
-        n = len(nums)
+    def getRow(self, rowIndex: int) -> List[int]:
 
-        def findInd(lorr):
-            l, r = 0, n
-            while l < r:
-                mid = (l + r) // 2
+        if rowIndex == 0:
+            return [1]
+        elif rowIndex == 1:
+            return [1, 1]
+        else:
+            prev = [1, 1]
 
-                if nums[mid] == target:
-                    if lorr:
-                        if mid == 0 or nums[mid - 1] < target:
-                            return mid
-                        else:
-                            r = mid
-                    else:
-                        if mid == n - 1 or nums[mid + 1] > target:
-                            return mid
-                        else:
-                            l = mid + 1
-                elif nums[mid] > target:
-                    r = mid
-                else:
-                    l = mid + 1
+            for _ in range(1, rowIndex):
+                nr = [0] * (len(prev) + 1)
 
-            return -1
+                nr[0], nr[-1] = 1, 1
 
-        return [findInd(True), findInd(False)]
+                for j in range(1, len(prev)):
+                    nr[j] = prev[j - 1] + prev[j]
+                
+                prev = nr[:]
+
+            return prev
 
 
 def main():
     s = Solution()
-    ans = s.searchRange(nums=[2, 2], target=2)
+    ans = s.getRow(rowIndex=3)
     print(ans)
 
 
