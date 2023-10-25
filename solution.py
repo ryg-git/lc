@@ -6,31 +6,27 @@ from typing import *
 
 
 class Solution:
-    def getRow(self, rowIndex: int) -> List[int]:
+    def kthGrammar(self, n: int, k: int) -> int:
+        if n == 1:
+            return 0
 
-        if rowIndex == 0:
-            return [1]
-        elif rowIndex == 1:
-            return [1, 1]
-        else:
-            prev = [1, 1]
+        def rec(nn: int, kk: int):
+            if nn == 1:
+                return 0
 
-            for _ in range(1, rowIndex):
-                nr = [0] * (len(prev) + 1)
+            mid = nn // 2
 
-                nr[0], nr[-1] = 1, 1
+            if mid >= kk:
+                return rec(mid, kk)
+            else:
+                return 1 - rec(mid, kk - mid)
 
-                for j in range(1, len(prev)):
-                    nr[j] = prev[j - 1] + prev[j]
-                
-                prev = nr[:]
-
-            return prev
+        return rec(nn=2 ** (n - 1), kk=k)
 
 
 def main():
     s = Solution()
-    ans = s.getRow(rowIndex=3)
+    ans = s.kthGrammar(n=2, k=2)
     print(ans)
 
 
